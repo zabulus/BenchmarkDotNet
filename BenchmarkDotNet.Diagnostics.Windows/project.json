@@ -16,6 +16,7 @@
       }
     }
   },
+  "compileExclude": [ "DiagnoserBase.cs", "SourceDiagnoser.cs" ],
   "frameworks": {
     "net40": { },
     "dnx451": { }
