@@ -25,6 +25,7 @@
       "target": "project",
       "version": "0.9.5-*"
     },
+    "Microsoft.Diagnostics.Runtime": "0.8.31-beta",
     "Microsoft.Diagnostics.Tracing.TraceEvent": "1.0.41.0"
   }
 }
