@@ -66,10 +66,10 @@ namespace BenchmarkDotNet.Code
     {
         public NonVoidDeclarationsProvider(Target target) : base(target) { }
 
-        public override string TargetMethodReturnTypeNamespace 
+        public override string TargetMethodReturnTypeNamespace
             => Target.Method.ReturnType.Namespace == "System" // As "using System;" is always included in the template, don't emit it again
-                || string.IsNullOrWhiteSpace(Target.Method.ReturnType.Namespace) 
-                    ? string.Empty 
+                || string.IsNullOrWhiteSpace(Target.Method.ReturnType.Namespace)
+                    ? string.Empty
                     : $"using {Target.Method.ReturnType.Namespace};";
 
         public virtual string TargetMethodReturnType => Target.Method.ReturnType.GetCorrectTypeName();
@@ -83,7 +83,7 @@ namespace BenchmarkDotNet.Code
 
         public override string IdleMethodDelegateType
             => Target.Method.ReturnType.IsStruct()
-                ? "Func<int>" 
+                ? "Func<int>"
                 : $"Func<{TargetMethodReturnType}>";
 
         public override string IdleImplementation
@@ -97,7 +97,7 @@ namespace BenchmarkDotNet.Code
                 else if (type.GetTypeInfo().IsClass || type.GetTypeInfo().IsInterface)
                     value = "null";
                 else
-                    value = SourceCodeHelper.ToSourceCode(Activator.CreateInstance(type)) + ";";                                    
+                    value = SourceCodeHelper.ToSourceCode(Activator.CreateInstance(type)) + ";";
                 return $"return {value};";
             }
         }
@@ -110,7 +110,7 @@ namespace BenchmarkDotNet.Code
         public TaskDeclarationsProvider(Target target) : base(target) { }
 
         public override string TargetMethodDelegate
-            => $"() => {{ BenchmarkDotNet.Running.TaskMethodInvoker.ExecuteBlocking({Target.Method.Name}); }}";        
+            => $"() => {{ BenchmarkDotNet.Running.TaskMethodInvoker.ExecuteBlocking({Target.Method.Name}); }}";
 
         public override string IdleImplementation
             => $"BenchmarkDotNet.Running.TaskMethodInvoker.Idle();";
@@ -131,7 +131,11 @@ namespace BenchmarkDotNet.Code
         }
 
         public override string TargetMethodReturnType
-            => Target.Method.ReturnType.GetTypeInfo().GetGenericArguments().Single().GetCorrectTypeName();
+            => Target.Method.ReturnType
+#if !UAP
+            .GetTypeInfo()
+#endif
+            .GetGenericArguments().Single().GetCorrectTypeName();
 
         public override string TargetMethodDelegate
             => $"() => {{ return {invokerFullName}<{TargetMethodReturnType}>.ExecuteBlocking({Target.Method.Name}); }}";
@@ -140,7 +144,7 @@ namespace BenchmarkDotNet.Code
 
         public override string IdleMethodDelegateType => TargetMethodDelegateType;
 
-        public override string IdleImplementation 
+        public override string IdleImplementation
             => $"return {invokerFullName}<{TargetMethodReturnType}>.Idle();";
     }
 }

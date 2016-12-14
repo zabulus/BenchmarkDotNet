@@ -44,11 +44,24 @@
         },
         "System.ComponentModel.EventBasedAsync": "4.0.11"
       }
+    },
+    "uap10.0": {
+      "buildOptions": {
+        "define": [ "CORE", "UAP" ]
+      },
+      "dependencies": {
+        "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+        "System.Threading.Tasks": "4.3.0"
+      }
     }
   },
   "dependencies": {
     "BenchmarkDotNet": {
       "target": "project"
     }
+  },
+  "runtimes": {
+    "win10-x64": {},
+    "win10-arm-aot": {}
   }
 }
