@@ -57,7 +57,7 @@ namespace BenchmarkDotNet.Toolchains.Uap
             }
 
             int attempt = 0;
-            while (true)
+            while (attempt < 5)
             {
                 try
                 {
@@ -68,10 +68,16 @@ namespace BenchmarkDotNet.Toolchains.Uap
                 {
                     return;
                 }
-                catch (Exception) when (attempt++ < 5)
+                catch (Exception)
                 {
                     Thread.Sleep(TimeSpan.FromMilliseconds(500)); // Previous benchmark run didn't release some files
+                    attempt++;
                 }
+            }
+
+            if (attempt == 5)
+            {
+                Directory.Move(artifactsPaths.BuildArtifactsDirectoryPath, artifactsPaths.BuildArtifactsDirectoryPath + Guid.NewGuid());
             }
         }
 

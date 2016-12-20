@@ -2,9 +2,9 @@
 
 namespace BenchmarkDotNet.Attributes.Jobs
 {
-    public class AupJobAttribute : JobConfigBaseAttribute
+    public class UapJobAttribute : JobConfigBaseAttribute
     {
-        public AupJobAttribute() : base(Job.Uap)
+        public UapJobAttribute() : base(Job.Uap)
         {
         }
     }
