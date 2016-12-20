@@ -4,7 +4,6 @@ using System.Globalization;
 using BenchmarkDotNet.Horology;
 using BenchmarkDotNet.Portability;
 using BenchmarkDotNet.Properties;
-using BenchmarkDotNet.Toolchains.DotNetCli;
 
 namespace BenchmarkDotNet.Environments
 {
@@ -61,7 +60,7 @@ namespace BenchmarkDotNet.Environments
             HardwareTimerKind = Chronometer.HardwareTimerKind;
             JitModules = RuntimeInformation.GetJitModulesInfo();
 #if !UAP
-            DotNetCliVersion = new Lazy<string>(DotNetCliCommandExecutor.GetDotNetCliVersion);
+            DotNetCliVersion = new Lazy<string>(Toolchains.DotNetCli.DotNetCliCommandExecutor.GetDotNetCliVersion);
 #else
             DotNetCliVersion = new Lazy<string>(() => string.Empty);
 #endif

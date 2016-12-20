@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Toolchains.DotNetCli;
+﻿#if !UAP
+using BenchmarkDotNet.Toolchains.DotNetCli;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace BenchmarkDotNet.Toolchains.Uap
 {
-#if !UAP
     public class UapToolchain : Toolchain
     {
         public static readonly IToolchain Instance = new UapToolchain();
@@ -43,5 +43,5 @@ namespace BenchmarkDotNet.Toolchains.Uap
             return string.Empty;
         }
     }
-#endif
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -15,7 +16,6 @@ using BenchmarkDotNet.Toolchains.Results;
 
 namespace BenchmarkDotNet.Toolchains
 {
-#if !UAP
     internal class Executor : IExecutor
     {
         // This needs to be static, so that we can share a single handler amongst all instances of Executor's
@@ -126,5 +126,5 @@ namespace BenchmarkDotNet.Toolchains
                 .ToString();
         }
     }
-#endif
 }
+#endif

@@ -13,8 +13,5 @@
   "frameworks": {
     "net46": {
     }
-  },
-  "runtimes": {
-    "win10-x64": {}
   }
 }

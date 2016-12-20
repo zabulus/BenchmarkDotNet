@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Characteristics;
+﻿#if !UAP
+using BenchmarkDotNet.Characteristics;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
@@ -8,7 +9,6 @@ using BenchmarkDotNet.Toolchains.DotNetCli;
 
 namespace BenchmarkDotNet.Toolchains.Core
 {
-#if !UAP
     public class CoreToolchain : Toolchain
     {
         private const string TargetFrameworkMoniker = "netcoreapp1.1";
@@ -88,5 +88,5 @@ namespace BenchmarkDotNet.Toolchains.Core
             return string.Empty;
         }
     }
-#endif
 }
+#endif

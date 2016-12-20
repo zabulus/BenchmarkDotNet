@@ -1,10 +1,10 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Diagnostics;
 using BenchmarkDotNet.Loggers;
 
 namespace BenchmarkDotNet.Extensions
 {
-#if !UAP
     // we need it public to reuse it in the auto-generated dll
     // but we hide it from intellisense with following attribute
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -27,5 +27,5 @@ namespace BenchmarkDotNet.Extensions
             process.ProcessorAffinity = value;
         }
     }
-#endif
 }
+#endif

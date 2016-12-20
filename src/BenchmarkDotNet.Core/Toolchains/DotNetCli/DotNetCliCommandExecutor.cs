@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -7,7 +8,6 @@ using BenchmarkDotNet.Loggers;
 
 namespace BenchmarkDotNet.Toolchains.DotNetCli
 {
-#if !UAP
     internal class DotNetCliCommandExecutor
     {
         internal static string GetDotNetCliVersion()
@@ -66,5 +66,5 @@ namespace BenchmarkDotNet.Toolchains.DotNetCli
             };
         }
     }
-#endif
 }
+#endif

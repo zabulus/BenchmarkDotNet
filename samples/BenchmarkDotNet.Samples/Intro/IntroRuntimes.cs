@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Environments;
@@ -53,3 +54,4 @@ namespace BenchmarkDotNet.Samples.Intro
         }
     }
 }
+#endif

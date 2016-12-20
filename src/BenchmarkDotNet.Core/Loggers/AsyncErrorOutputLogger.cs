@@ -1,9 +1,9 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Diagnostics;
 
 namespace BenchmarkDotNet.Loggers
 {
-#if !UAP
     internal class AsyncErrorOutputLogger : IDisposable
     {
         private readonly Process process;
@@ -38,5 +38,5 @@ namespace BenchmarkDotNet.Loggers
             }
         }
     }
-#endif
 }
+#endif

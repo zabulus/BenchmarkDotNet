@@ -1,12 +1,9 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-#if UAP
-using System.Threading.Tasks;
-#else
 using System.Threading;
-#endif
 using BenchmarkDotNet.Characteristics;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Extensions;
@@ -16,7 +13,6 @@ using BenchmarkDotNet.Running;
 
 namespace BenchmarkDotNet.Toolchains.DotNetCli
 {
-#if !UAP
     internal class DotNetCliGenerator : GeneratorBase
     {
         private string TargetFrameworkMoniker { get; }
@@ -96,11 +92,7 @@ namespace BenchmarkDotNet.Toolchains.DotNetCli
                 }
                 catch (Exception) when (attempt++ < 5)
                 {
-#if UAP
-                    Task.Delay(500).Wait();
-#else
                     Thread.Sleep(TimeSpan.FromMilliseconds(500)); // Previous benchmark run didn't release some files
-#endif
                 }
             }
         }
@@ -190,5 +182,5 @@ namespace BenchmarkDotNet.Toolchains.DotNetCli
                 .Any(fileInfo => fileInfo.Extension == "sln" || fileInfo.Name == "global.json");
         }
     }
-#endif
 }
+#endif

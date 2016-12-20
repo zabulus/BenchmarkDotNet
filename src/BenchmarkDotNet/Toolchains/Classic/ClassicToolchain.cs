@@ -1,6 +1,6 @@
-﻿namespace BenchmarkDotNet.Toolchains.Classic
+﻿#if !UAP
+namespace BenchmarkDotNet.Toolchains.Classic
 {
-#if !UAP
     public class ClassicToolchain
     {
         public static readonly IToolchain Instance
@@ -10,5 +10,5 @@
             = new Net46Toolchain();
 #endif
     }
-#endif
 }
+#endif

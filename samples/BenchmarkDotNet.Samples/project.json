@@ -1,9 +1,6 @@
 ﻿{
   "title": "BenchmarkDotNet.Samples",
-  "buildOptions": {
-    "emitEntryPoint": true,
-    "allowUnsafe": true
-  },
+
   "configurations": {
     "Debug": {
       "buildOptions": {
@@ -22,7 +19,8 @@
   "frameworks": {
     "net45": {
       "buildOptions": {
-        "define": [ "CLASSIC" ]
+        "define": [ "CLASSIC" ],
+        "allowUnsafe": true
       },
       "frameworkAssemblies": {
         "System.Reflection": "4.0.0.0"
@@ -35,7 +33,8 @@
     },
     "netcoreapp1.1": {
       "buildOptions": {
-        "define": [ "CORE" ]
+        "define": [ "CORE" ],
+        "allowUnsafe": true
       },
       "dependencies": {
         "Microsoft.NETCore.App": {
@@ -47,7 +46,8 @@
     },
     "uap10.0": {
       "buildOptions": {
-        "define": [ "CORE", "UAP" ]
+        "define": [ "CORE", "UAP" ],
+        "allowUnsafe": true
       },
       "dependencies": {
         "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
@@ -59,9 +59,5 @@
     "BenchmarkDotNet": {
       "target": "project"
     }
-  },
-  "runtimes": {
-    "win10-x64": {},
-    "win10-arm-aot": {}
   }
 }

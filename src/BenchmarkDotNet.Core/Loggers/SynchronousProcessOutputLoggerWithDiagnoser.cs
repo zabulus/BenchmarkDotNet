@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using BenchmarkDotNet.Diagnosers;
@@ -7,7 +8,6 @@ using BenchmarkDotNet.Running;
 
 namespace BenchmarkDotNet.Loggers
 {
-#if !UAP
     internal class SynchronousProcessOutputLoggerWithDiagnoser
     {
         private readonly ILogger logger;
@@ -68,5 +68,5 @@ namespace BenchmarkDotNet.Loggers
             }
         }
     }
-#endif
 }
+#endif

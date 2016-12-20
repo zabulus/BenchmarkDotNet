@@ -86,9 +86,7 @@ namespace BenchmarkDotNet.Characteristics
             }
 
             if (!characteristic.CharacteristicType
-#if !UAP
                 .GetTypeInfo()
-#endif
                 .IsInstanceOfType(value))
                 throw new ArgumentException(
                     $"The value {value} is not assignable to {characteristic} property.",

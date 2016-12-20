@@ -132,9 +132,7 @@ namespace BenchmarkDotNet.Code
 
         public override string TargetMethodReturnType
             => Target.Method.ReturnType
-#if !UAP
             .GetTypeInfo()
-#endif
             .GetGenericArguments().Single().GetCorrectTypeName();
 
         public override string TargetMethodDelegate

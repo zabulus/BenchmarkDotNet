@@ -226,7 +226,7 @@ namespace BenchmarkDotNet.Toolchains.Uap
                         break;
                     }
 
-                    Task.Delay(100).Wait();
+                    Thread.Sleep(100);
                 }
             }
         }

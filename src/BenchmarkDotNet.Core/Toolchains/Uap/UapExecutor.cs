@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Linq;
 using BenchmarkDotNet.Characteristics;
 using BenchmarkDotNet.Diagnosers;
@@ -9,7 +10,6 @@ using System.IO;
 
 namespace BenchmarkDotNet.Toolchains.Uap
 {
-#if !UAP
     internal class UapExecutor : IExecutor
     {
         public ExecuteResult Execute(BuildResult buildResult, Benchmark benchmark, ILogger logger,
@@ -46,5 +46,5 @@ namespace BenchmarkDotNet.Toolchains.Uap
             }
         }
     }
-#endif
 }
+#endif

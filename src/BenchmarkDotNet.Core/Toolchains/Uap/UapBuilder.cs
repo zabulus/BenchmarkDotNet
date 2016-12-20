@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ using BenchmarkDotNet.Toolchains.DotNetCli;
 
 namespace BenchmarkDotNet.Toolchains.Uap
 {
-#if !UAP
     internal class UapBuilder : IBuilder
     {
         private const string Configuration = "Release";
@@ -65,5 +65,5 @@ namespace BenchmarkDotNet.Toolchains.Uap
             };
         }
     }
-#endif
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Jobs;
 
@@ -17,7 +18,6 @@ namespace BenchmarkDotNet.Toolchains
         {
             switch (runtime)
             {
-#if !UAP
                 case Runtime.Clr:
                 case Runtime.Mono:
                     return Classic.ClassicToolchain.Instance;
@@ -25,10 +25,10 @@ namespace BenchmarkDotNet.Toolchains
                     return Core.CoreToolchain.Instance;
                 case Runtime.Uap:
                     return Uap.UapToolchain.Instance;
-#endif
                 default:
                     throw new ArgumentOutOfRangeException(nameof(runtime), runtime, "Runtime not supported");
             }
         }
     }
 }
+#endif

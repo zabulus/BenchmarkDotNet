@@ -1,3 +1,4 @@
+#if !UAP
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -6,7 +7,6 @@ using BenchmarkDotNet.Loggers;
 
 namespace BenchmarkDotNet.Toolchains
 {
-#if !UAP
     internal class ConsoleHandler
     {
         public ConsoleCancelEventHandler EventHandler { get; private set; }
@@ -51,11 +51,7 @@ namespace BenchmarkDotNet.Toolchains
                     return;
 
                 // Give it a bit of time to exit!
-#if UAP
-                System.Threading.Tasks.Task.Delay(500);
-#else
                 Thread.Sleep(500);
-#endif
 
                 if (HasProcessDied(localProcess))
                     return;
@@ -104,5 +100,5 @@ namespace BenchmarkDotNet.Toolchains
             return true;
         }
     }
-#endif
 }
+#endif

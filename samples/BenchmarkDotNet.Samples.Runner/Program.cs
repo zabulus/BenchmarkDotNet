@@ -1,9 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using BenchmarkDotNet.Samples.Framework;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace BenchmarkDotNet.Samples.Runner
 {
@@ -11,7 +8,7 @@ namespace BenchmarkDotNet.Samples.Runner
     {
         public static void Main(string[] args)
         {
-            BenchmarkSwitcher.FromAssembly(typeof(BenchmarkDotNet.Samples.Program).GetTypeInfo().Assembly).Run(args);
+            BenchmarkSwitcher.FromAssembly(typeof(Framework_DateTime).GetTypeInfo().Assembly).Run(args);
         }
     }
 }

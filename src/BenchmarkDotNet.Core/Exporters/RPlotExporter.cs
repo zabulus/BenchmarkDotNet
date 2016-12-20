@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,7 +11,6 @@ using BenchmarkDotNet.Reports;
 
 namespace BenchmarkDotNet.Exporters
 {
-#if !UAP
     public class RPlotExporter : IExporter, IExporterDependancies
     {
         public static readonly IExporter Default = new RPlotExporter();
@@ -66,5 +66,5 @@ namespace BenchmarkDotNet.Exporters
             throw new NotSupportedException();
         }
     }
-#endif
 }
+#endif

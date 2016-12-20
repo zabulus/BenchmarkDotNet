@@ -1,21 +1,16 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Linq;
-#if UAP
-using System.Threading.Tasks;
-#else
 using System.Threading;
-#endif
 using BenchmarkDotNet.Characteristics;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Helpers;
 using System.IO;
 using BenchmarkDotNet.Code;
 using System.Reflection;
-using System.Diagnostics;
 
 namespace BenchmarkDotNet.Toolchains.Uap
 {
-#if !UAP
     internal class UapGenerator : GeneratorBase
     {
         private const string ProjectFileName = "UapBenchmarkProject.csproj";
@@ -27,7 +22,7 @@ namespace BenchmarkDotNet.Toolchains.Uap
             var assemblyName = benchmark.Target.Type.GetTypeInfo().Assembly.GetName();
             content = SetGuid(content)
                 .Replace("$BENCHMARKASSEMLYNAME$", assemblyName.Name)
-                .Replace("$BENCHMARKASSEMLYPATH$", @"D:\Workshop\BenchmarkDotNet\samples\BenchmarkDotNet.Samples\bin\Release\uap10.0\BenchmarkDotNet.Samples.dll")
+                .Replace("$BENCHMARKASSEMLYPATH$", benchmark.Target.Type.GetTypeInfo().Assembly.Location)
                 .Replace("$BDNCOREPATH$", @"D:\Workshop\BenchmarkDotNet\src\BenchmarkDotNet\bin\Release\uap10.0\BenchmarkDotNet.Core.dll")
                 .Replace("$BDNPATH$", @"D:\Workshop\BenchmarkDotNet\src\BenchmarkDotNet\bin\Release\uap10.0\BenchmarkDotNet.dll");
 
@@ -75,11 +70,7 @@ namespace BenchmarkDotNet.Toolchains.Uap
                 }
                 catch (Exception) when (attempt++ < 5)
                 {
-#if UAP
-                    Task.Delay(500).Wait();
-#else
                     Thread.Sleep(TimeSpan.FromMilliseconds(500)); // Previous benchmark run didn't release some files
-#endif
                 }
             }
         }
@@ -147,7 +138,13 @@ namespace BenchmarkDotNet.Toolchains.Uap
             var propertiesFolder = Path.Combine(artifactsPaths.BinariesDirectoryPath, "Properties");
             Directory.CreateDirectory(propertiesFolder);
             File.WriteAllBytes(Path.Combine(propertiesFolder, rd), ResourceHelper.LoadBinaryFile(rd));
+
+            var mainPageXaml = "MainPage.xaml";
+            File.WriteAllText(Path.Combine(artifactsPaths.BinariesDirectoryPath, mainPageXaml), ResourceHelper.LoadTemplate(mainPageXaml));
+
+            var mainPageCs = "MainPage.xaml.notcs";
+            File.WriteAllText(Path.Combine(artifactsPaths.BinariesDirectoryPath, Path.ChangeExtension(mainPageCs, ".cs")), ResourceHelper.LoadTemplate(mainPageCs));
         }
     }
-#endif
 }
+#endif

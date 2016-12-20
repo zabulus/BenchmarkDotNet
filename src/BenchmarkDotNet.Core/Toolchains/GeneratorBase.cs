@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.IO;
 using System.Reflection;
 using BenchmarkDotNet.Characteristics;
@@ -90,7 +91,6 @@ namespace BenchmarkDotNet.Toolchains
 
         private static void GenerateAppConfig(Benchmark benchmark, ArtifactsPaths artifactsPaths, IResolver resolver)
         {
-#if !UAP
             string sourcePath = benchmark.Target.Type.GetTypeInfo().Assembly.Location + ".config";
 
             using (var source = File.Exists(sourcePath) ? new StreamReader(File.OpenRead(sourcePath)) : TextReader.Null)
@@ -98,7 +98,7 @@ namespace BenchmarkDotNet.Toolchains
             {
                 AppConfigGenerator.Generate(benchmark.Job, source, destination, resolver);
             }
-#endif
         }
     }
 }
+#endif
