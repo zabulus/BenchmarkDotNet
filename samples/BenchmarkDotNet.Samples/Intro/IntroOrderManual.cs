@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if !UAP
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
@@ -51,3 +52,4 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Slow() => Thread.Sleep(X * 100);
     }
 }
+#endif

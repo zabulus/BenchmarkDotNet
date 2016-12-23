@@ -1,5 +1,4 @@
-﻿#if !UAP
-using BenchmarkDotNet.Toolchains.DotNetCli;
+﻿using BenchmarkDotNet.Toolchains.DotNetCli;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,4 +31,3 @@ namespace BenchmarkDotNet.Toolchains.Uap
         }
     }
 }
-#endif

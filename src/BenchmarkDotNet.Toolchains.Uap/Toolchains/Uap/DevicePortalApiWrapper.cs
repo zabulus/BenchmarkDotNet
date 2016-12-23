@@ -1,5 +1,4 @@
-﻿#if !UAP
-using RestSharp;
+﻿using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -133,18 +132,11 @@ namespace BenchmarkDotNet.Toolchains.Uap
             installRequest.AddQueryParameter("package", Path.GetFileName(fullPath));
             installRequest.AddHeader("X-CSRF-Token", csrfToken.Value);
             int i = 10;
-            for (;;)
+            while (client.Execute(installRequest).StatusCode != HttpStatusCode.Accepted)
             {
-                if (client.Execute(installRequest).StatusCode != HttpStatusCode.Accepted)
+                if (--i == 0)
                 {
-                    if (--i == 0)
-                    {
-                        throw new InvalidOperationException("Install failed");
-                    }
-                }
-                else
-                {
-                    break;
+                    throw new InvalidOperationException("Install failed");
                 }
             }
 
@@ -177,23 +169,16 @@ namespace BenchmarkDotNet.Toolchains.Uap
             packagesRequest.AddQueryParameter("_", GetTime().ToString());
 
             i = 10;
-            for (;;)
+            PackageStruct ret;
+            while ((ret = client.Get<PackagesStruct>(packagesRequest).Data.InstalledPackages.SingleOrDefault(x => x.Name.Contains("BenchmarkDotNet"))) == null)
             {
-                var response = client.Get<PackagesStruct>(packagesRequest);
-
-                var ret = response.Data.InstalledPackages.SingleOrDefault(x => x.Name.Contains("BenchmarkDotNet"));
-                if (ret == null)
+                if (--i == 0)
                 {
-                    if (--i == 0)
-                    {
-                        throw new InvalidOperationException("Installation failed");
-                    }
-                }
-                else
-                {
-                    return ret;
+                    throw new InvalidOperationException("Installation failed");
                 }
             }
+
+            return ret;
         }
 
         public void RunApplication(PackageStruct id)
@@ -303,7 +288,7 @@ namespace BenchmarkDotNet.Toolchains.Uap
                     var @object = SimpleJson.SimpleJson.DeserializeObject<RootObject>(str);
                     ret.AddRange(@object.Events.Select(x => x.StringMessage));
                 }
-                catch(AggregateException ex)
+                catch (AggregateException ex)
                 {
                     if (ex.InnerException is OperationCanceledException)
                     {
@@ -320,4 +305,3 @@ namespace BenchmarkDotNet.Toolchains.Uap
         }
     }
 }
-#endif

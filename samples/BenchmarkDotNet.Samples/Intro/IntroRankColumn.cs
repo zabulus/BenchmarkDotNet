@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿#if !UAP
+using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Columns;
 using BenchmarkDotNet.Attributes.Jobs;
@@ -24,3 +25,4 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Bar() => Thread.Sleep(Factor * 200);
     }
 }
+#endif

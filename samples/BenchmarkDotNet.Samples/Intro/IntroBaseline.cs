@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
@@ -27,3 +28,4 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Unstable() => Thread.Sleep(BaseTime + (int) ((random.NextDouble() - 0.5) * 2 * BaseTime));
     }
 }
+#endif

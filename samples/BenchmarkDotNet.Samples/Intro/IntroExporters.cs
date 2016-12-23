@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Exporters;
@@ -15,9 +16,7 @@ namespace BenchmarkDotNet.Samples.Intro
     [CsvMeasurementsExporter]
     [HtmlExporter]
     [PlainExporter]
-#if !UAP
     [RPlotExporter]
-#endif
     [JsonExporterAttribute.Brief]
     [JsonExporterAttribute.BriefCompressed]
     [JsonExporterAttribute.Full]
@@ -37,3 +36,4 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Sleep50Noisy() => Thread.Sleep(random.Next(100));
     }
 }
+#endif

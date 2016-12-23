@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿#if !UAP
+using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
 
@@ -15,3 +16,4 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Sleep50() => Thread.Sleep(50);
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿#if !UAP
+using System.Threading;
 using BenchmarkDotNet.Attributes;
 
 namespace BenchmarkDotNet.Samples.Intro
@@ -15,3 +16,4 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Benchmark() => Thread.Sleep(A + B + 5);
     }
 }
+#endif

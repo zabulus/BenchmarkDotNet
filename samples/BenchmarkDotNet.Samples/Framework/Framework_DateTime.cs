@@ -13,8 +13,7 @@ namespace BenchmarkDotNet.Samples.Framework
         {
             public Config()
             {
-                Add(Job.Uap);
-                //Add(Job.Clr, Job.Mono, Job.Uap);
+                Add(Job.Clr, Job.Mono);
                 Add(new TagColumn("Tool", name => name.Replace(GetMetric(name), "")));
                 Add(new TagColumn("Metric", GetMetric));
             }

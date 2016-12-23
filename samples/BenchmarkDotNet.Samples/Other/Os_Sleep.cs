@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿#if !UAP
+using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
@@ -38,3 +39,4 @@ namespace BenchmarkDotNet.Samples.Other
         }
     }
 }
+#endif

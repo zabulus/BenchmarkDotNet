@@ -71,7 +71,7 @@ namespace BenchmarkDotNet.Engines
                 printAction(measurement.ToOutputLine());
 
             printAction(GCStats.WithTotalOperations(totalOperationsCount).ToOutputLine());
-            printAction("\r\n");
+            printAction(Environment.NewLine);
         }
 
         // TODO: improve

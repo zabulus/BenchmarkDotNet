@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿#if !UAP
+using System.Threading;
 using BenchmarkDotNet.Analysers;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
@@ -20,9 +21,7 @@ namespace BenchmarkDotNet.Samples.Intro
                 Add(Job.Dry);
                 Add(ConsoleLogger.Default);
                 Add(TargetMethodColumn.Method, StatisticColumn.Max);
-#if !UAP
                 Add(RPlotExporter.Default, CsvExporter.Default);
-#endif
                 Add(EnvironmentAnalyser.Default);
                 UnionRule = ConfigUnionRule.AlwaysUseLocal;
             }
@@ -35,3 +34,4 @@ namespace BenchmarkDotNet.Samples.Intro
         }
     }
 }
+#endif
