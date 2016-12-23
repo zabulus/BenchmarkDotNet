@@ -15,6 +15,13 @@ namespace BenchmarkDotNet.Toolchains.Uap
     {
         private const string ProjectFileName = "UapBenchmarkProject.csproj";
 
+        private readonly string uapBinariesFolder;
+
+        public UapGenerator(string uapBinariesFolder)
+        {
+            this.uapBinariesFolder = uapBinariesFolder;
+        }
+
         protected override void GenerateProject(Benchmark benchmark, ArtifactsPaths artifactsPaths, IResolver resolver)
         {
             string content = ResourceHelper.LoadTemplate("UapBenchmarkProject.notcsproj");
@@ -23,8 +30,8 @@ namespace BenchmarkDotNet.Toolchains.Uap
             content = SetGuid(content)
                 .Replace("$BENCHMARKASSEMLYNAME$", assemblyName.Name)
                 .Replace("$BENCHMARKASSEMLYPATH$", benchmark.Target.Type.GetTypeInfo().Assembly.Location)
-                .Replace("$BDNCOREPATH$", @"D:\Workshop\BenchmarkDotNet\src\BenchmarkDotNet\bin\Release\uap10.0\BenchmarkDotNet.Core.dll")
-                .Replace("$BDNPATH$", @"D:\Workshop\BenchmarkDotNet\src\BenchmarkDotNet\bin\Release\uap10.0\BenchmarkDotNet.dll");
+                .Replace("$BDNCOREPATH$", Path.Combine(this.uapBinariesFolder, "BenchmarkDotNet.Core.dll"))
+                .Replace("$BDNPATH$", Path.Combine(this.uapBinariesFolder, "BenchmarkDotNet.dll"));
 
             File.WriteAllText(artifactsPaths.ProjectFilePath, content);
         }

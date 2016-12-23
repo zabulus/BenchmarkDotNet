@@ -7,39 +7,27 @@ using System.Threading.Tasks;
 
 namespace BenchmarkDotNet.Toolchains.Uap
 {
-    public class UapToolchain : Toolchain
+    public class UapToolchainConfig
     {
-        public static readonly IToolchain Instance = new UapToolchain();
+        public string DevicePortalUri { get; set; }
+        public string Pin { get; set; }
+        public string CSRFCookieValue { get; set; }
+        public string WMIDCookieValue { get; set; }
+        public string UAPBinariesFolder { get; set; }
+    }
 
-        private const string TargetFrameworkMoniker = "uap10.0";
-
-        private UapToolchain()
-            : base("Core",
-                  new UapGenerator(),
+    public class UapToolchain : Toolchain, IFormattable
+    {
+        public UapToolchain(UapToolchainConfig config)
+            : base("UAP",
+                  new UapGenerator(config.UAPBinariesFolder),
                   new UapBuilder(),
-                  new UapExecutor())
+                  new UapExecutor(config))
         {
         }
 
-        private static string GetExtraDependencies()
+        public string ToString(string format, IFormatProvider formatProvider)
         {
-            return "\"dependencies\": { \"Microsoft.NETCore.UniversalWindowsPlatform\": { \"version\": \"5.1.0\" } },";
-        }
-
-        private static string GetImports()
-        {
-            return "[]";
-            //return "[ \"dnxcore50\", \"portable-net45+win8\", \"dotnet5.6\", \"netcore50\" ]";
-        }
-
-        private static string GetRuntime()
-        {
-            var currentRuntime = "win10-x64";
-            if (!string.IsNullOrEmpty(currentRuntime))
-            {
-                return $"\"runtimes\": {{ \"{currentRuntime}\": {{ }} }},";
-            }
-
             return string.Empty;
         }
     }

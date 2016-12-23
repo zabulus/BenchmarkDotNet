@@ -24,7 +24,7 @@ namespace BenchmarkDotNet.Toolchains
                 case Runtime.Core:
                     return Core.CoreToolchain.Instance;
                 case Runtime.Uap:
-                    return Uap.UapToolchain.Instance;
+                    throw new ArgumentOutOfRangeException("Uap Toolchain must be specified as charateristic in Job");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(runtime), runtime, "Runtime not supported");
             }

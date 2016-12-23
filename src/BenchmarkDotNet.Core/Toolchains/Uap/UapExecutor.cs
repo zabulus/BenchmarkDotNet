@@ -12,6 +12,13 @@ namespace BenchmarkDotNet.Toolchains.Uap
 {
     internal class UapExecutor : IExecutor
     {
+        private readonly UapToolchainConfig config;
+
+        public UapExecutor(UapToolchainConfig config)
+        {
+            this.config = config;
+        }
+
         public ExecuteResult Execute(BuildResult buildResult, Benchmark benchmark, ILogger logger,
             IResolver resolver, IDiagnoser diagnoser = null)
         {
@@ -19,7 +26,15 @@ namespace BenchmarkDotNet.Toolchains.Uap
             DevicePortalApiWrapper.PackageStruct app = null;
             try
             {
-                dpClient = new DevicePortalApiWrapper("tsNwc9d5WOvuRpqSHL0Yr4iXaAnhEMrk", "1079552595942511295369298866917553000457380973401454626786566684", "https://192.168.1.51");
+                if (config.Pin != null)
+                {
+                    dpClient = new DevicePortalApiWrapper(config.Pin, config.DevicePortalUri);
+                }
+                else
+                {
+                    dpClient = new DevicePortalApiWrapper(config.CSRFCookieValue, config.WMIDCookieValue, config.DevicePortalUri);
+                }
+                
                 app = dpClient.DeployApplication(Path.Combine(buildResult.ArtifactsPaths.BinariesDirectoryPath, @"AppPackages\UapBenchmarkProject_1.0.0.0_ARM_Test\UapBenchmarkProject_1.0.0.0_ARM.appx"));
 
                 dpClient.DeleteApplication(app);
