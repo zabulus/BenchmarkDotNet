@@ -27,9 +27,7 @@
       "buildOptions": {
         "define": [ "RELEASE", "TRACE" ],
         "optimize": true,
-        "xmlDoc": true,
-        "keyFile": "../strongNameKey.snk",
-        "strongName": true
+        "xmlDoc": true
       }
     }
   },

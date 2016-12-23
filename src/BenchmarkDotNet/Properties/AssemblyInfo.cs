@@ -21,12 +21,6 @@ using BenchmarkDotNet.Properties;
 
 [assembly: CLSCompliant(true)]
 
-#if RELEASE
-[assembly: InternalsVisibleTo("BenchmarkDotNet.Tests,PublicKey=" + BenchmarkDotNetInfo.PublicKey)]
-[assembly: InternalsVisibleTo("BenchmarkDotNet.IntegrationTests,PublicKey=" + BenchmarkDotNetInfo.PublicKey)]
-[assembly: InternalsVisibleTo("BenchmarkDotNet.Samples,PublicKey=" + BenchmarkDotNetInfo.PublicKey)]
-#else
 [assembly: InternalsVisibleTo("BenchmarkDotNet.Tests")]
 [assembly: InternalsVisibleTo("BenchmarkDotNet.IntegrationTests")]
 [assembly: InternalsVisibleTo("BenchmarkDotNet.Samples")]
-#endif

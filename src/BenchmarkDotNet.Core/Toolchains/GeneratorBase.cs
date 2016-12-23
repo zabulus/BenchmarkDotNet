@@ -12,7 +12,7 @@ using BenchmarkDotNet.Toolchains.Results;
 
 namespace BenchmarkDotNet.Toolchains
 {
-    internal abstract class GeneratorBase : IGenerator
+    public abstract class GeneratorBase : IGenerator
     {
         public GenerateResult GenerateProject(Benchmark benchmark, ILogger logger, string rootArtifactsFolderPath, IConfig config, IResolver resolver)
         {

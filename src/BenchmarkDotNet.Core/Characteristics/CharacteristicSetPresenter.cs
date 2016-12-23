@@ -65,7 +65,8 @@ namespace BenchmarkDotNet.Characteristics
             public override string ToPresentation(JobMode jobMode)
             {
                 var values = GetPresentableCharacteristics(jobMode, includeIgnoreOnApply: true)
-                    .Select(c => CharacteristicPresenter.ToPresentation(jobMode, c));
+                    .Select(c => CharacteristicPresenter.ToPresentation(jobMode, c))
+                    .Where(x => !string.IsNullOrEmpty(x));
                 return string.Join(Separator, values);
             }
         }

@@ -36,7 +36,14 @@ namespace BenchmarkDotNet.Characteristics
                 var id = characteristic.Id;
                 var type = characteristic.DeclaringType.FullName;
                 var value = SourceCodeHelper.ToSourceCode(characteristic[jobMode]);
-                return $"{type}.{id}Characteristic[job] = {value}";
+                if (value == string.Empty)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return $"{type}.{id}Characteristic[job] = {value}";
+                }
             }
         }
 

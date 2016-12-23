@@ -14,7 +14,7 @@ namespace BenchmarkDotNet.Extensions
 
         internal static string ToLowerCase(this bool value) => value ? "true" : "false"; // to avoid .ToString().ToLower() allocation
 
-        internal static string Escape(this string path) => "\"" + path + "\"";
+        public static string Escape(this string path) => "\"" + path + "\"";
 
         internal static string WithoutSuffix(this string str, string suffix, StringComparison stringComparison = StringComparison.CurrentCulture)
         {

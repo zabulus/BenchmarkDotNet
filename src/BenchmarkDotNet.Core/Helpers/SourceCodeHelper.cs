@@ -28,12 +28,12 @@ namespace BenchmarkDotNet.Core.Helpers
                 return value.GetType().GetCorrectTypeName() + "." + value;
             if (value is Type)
                 return "typeof(" + ((Type) value).GetCorrectTypeName() + ")";
-            if (!ReflectionUtils.GetTypeInfo(value.GetType()).IsValueType)
-                return "System.Activator.CreateInstance<" + value.GetType().GetCorrectTypeName() + ">()";
             if (value is TimeInterval)
                 return "new BenchmarkDotNet.Horology.TimeInterval(" + ToSourceCode(((TimeInterval)value).Nanoseconds) + ")";
             if (value is IFormattable)
                 return ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture);
+            if (!ReflectionUtils.GetTypeInfo(value.GetType()).IsValueType)
+                return "System.Activator.CreateInstance<" + value.GetType().GetCorrectTypeName() + ">()";
             return value.ToString();
         }
     }

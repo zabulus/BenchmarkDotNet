@@ -2,7 +2,7 @@
 
 namespace BenchmarkDotNet.Extensions
 {
-    internal static class ConfigurationExtensions
+    public static class ConfigurationExtensions
     {
         public static string ToConfig(this Platform platform)
         {

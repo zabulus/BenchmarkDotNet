@@ -19,7 +19,7 @@ using System.Management;
 
 namespace BenchmarkDotNet.Portability
 {
-    internal static class RuntimeInformation
+    public static class RuntimeInformation
     {
         private static readonly bool isMono = Type.GetType("Mono.Runtime") != null; // it allocates a lot of memory, we need to check it once in order to keep Enging non-allocating!
 
@@ -33,7 +33,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static string GetArchitecture() => IntPtr.Size == 4 ? "32bit" : "64bit";
 
-        internal static bool IsWindows()
+        public static bool IsWindows()
         {
 #if !CORE
             return new[] { PlatformID.Win32NT, PlatformID.Win32S, PlatformID.Win32Windows, PlatformID.WinCE }
@@ -102,7 +102,7 @@ namespace BenchmarkDotNet.Portability
 #if CLASSIC
             return $"Clr {System.Environment.Version}";
 #elif UAP
-            return "Uap 10.0";
+            return $"Uap";
 #elif CORE
             return System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
 #endif
