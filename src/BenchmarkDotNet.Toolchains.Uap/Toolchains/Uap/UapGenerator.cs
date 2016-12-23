@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using BenchmarkDotNet.Characteristics;
 using BenchmarkDotNet.Running;
-using BenchmarkDotNet.Helpers;
+using BenchmarkDotNet.Toolchains.Uap.Helpers;
 using System.IO;
 using BenchmarkDotNet.Code;
 using System.Reflection;
@@ -115,7 +115,7 @@ namespace BenchmarkDotNet.Toolchains.Uap
 
         protected override void GenerateCode(Benchmark benchmark, ArtifactsPaths artifactsPaths)
         {
-            File.WriteAllText(Path.Combine(artifactsPaths.BinariesDirectoryPath, "App.xaml.cs"), CodeGenerator.Generate(benchmark, "UapBenchmarkProgram.txt"));
+            File.WriteAllText(Path.Combine(artifactsPaths.BinariesDirectoryPath, "App.xaml.cs"), CodeGenerator.Generate(benchmark, "UapBenchmarkProgram.txt", (name) => ResourceHelper.LoadTemplate(name)));
         }
 
         protected override void CopyAllRequiredFiles(ArtifactsPaths artifactsPaths)

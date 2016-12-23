@@ -39,7 +39,9 @@
       "target": "project"
     }
   },
-
+  "buildOptions": {
+    "embed": [ "Templates/*" ]
+  },
   "frameworks": {
     "netcoreapp1.1": {
       "buildOptions": {
