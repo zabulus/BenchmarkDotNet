@@ -30,7 +30,7 @@ namespace BenchmarkDotNet.Validators
                     {
                         yield return new ValidationError(
                             TreatsWarningsAsErrors,
-                            $"Assembly {group.Key} which defines benchmarks references non-optimized {referencedAssemblyName.Name}");
+                            $"Assembly {group.Key.GetName().Name} which defines benchmarks references non-optimized {referencedAssemblyName.Name}");
                     }
                 }
 #endif
@@ -39,7 +39,7 @@ namespace BenchmarkDotNet.Validators
                 {
                     yield return new ValidationError(
                         TreatsWarningsAsErrors,
-                        $"Assembly {group.Key} which defines benchmarks is non-optimized");
+                        $"Assembly {group.Key.GetName().Name} which defines benchmarks is non-optimized");
                 }
             }
         }

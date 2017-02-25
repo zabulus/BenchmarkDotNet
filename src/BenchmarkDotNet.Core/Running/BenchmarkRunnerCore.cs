@@ -87,7 +87,7 @@ namespace BenchmarkDotNet.Running
 
             logger.WriteLineHeader("// * Export *");
             var currentDirectory = Directory.GetCurrentDirectory();
-            foreach (var file in config.GetCompositeExporter().ExportToFiles(summary))
+            foreach (var file in config.GetCompositeExporter().ExportToFiles(summary, logger))
             {
                 logger.WriteLineInfo($"  {file.Replace(currentDirectory, string.Empty).Trim('/', '\\')}");
             }
@@ -246,7 +246,7 @@ namespace BenchmarkDotNet.Running
                 var executeResult = toolchain.Executor.Execute(buildResult, benchmark, logger, resolver);
 
                 if (!executeResult.FoundExecutable)
-                    logger.WriteLineError("Executable not found");
+                    logger.WriteLineError($"Executable {buildResult.ArtifactsPaths.ExecutablePath} not found");
                 if (executeResult.ExitCode != 0)
                     logger.WriteLineError("ExitCode != 0");
                 executeResults.Add(executeResult);

@@ -12,15 +12,18 @@ namespace BenchmarkDotNet.Environments
     // you can finde the source code at Templates\BenchmarkProgram.txt
     public sealed class HostEnvironmentInfo : BenchmarkEnvironmentInfo
     {
+        public const string BenchmarkDotNetCaption = "BenchmarkDotNet";
+
         public static readonly CultureInfo MainCultureInfo;
 
         private static HostEnvironmentInfo Current;
 
-        public string BenchmarkDotNetCaption { get; }
-
         public string BenchmarkDotNetVersion { get; }
 
-        public string OsVersion { get; }
+        /// <summary>
+        /// Could be expensive
+        /// </summary>
+        public Lazy<string> OsVersion { get; }
 
         /// <summary>
         /// is expensive to call (1s)
@@ -32,7 +35,7 @@ namespace BenchmarkDotNet.Environments
         public string JitModules { get; }
 
         /// <summary>
-        /// is expensive to call (creates new process)
+        /// is expensive to call (creates new process by calling dotnet --version)
         /// </summary>
         public Lazy<string> DotNetCliVersion { get; }
 
@@ -51,11 +54,10 @@ namespace BenchmarkDotNet.Environments
 
         private HostEnvironmentInfo()
         {
-            BenchmarkDotNetCaption = GetBenchmarkDotNetCaption();
             BenchmarkDotNetVersion = GetBenchmarkDotNetVersion();
-            OsVersion = RuntimeInformation.GetOsVersion();
+            OsVersion = new Lazy<string>(RuntimeInformation.GetOsVersion);
             ProcessorName = new Lazy<string>(RuntimeInformation.GetProcessorName);
-            ProcessorCount = System.Environment.ProcessorCount;
+            ProcessorCount = Environment.ProcessorCount;
             ChronometerFrequency = Chronometer.Frequency;
             HardwareTimerKind = Chronometer.HardwareTimerKind;
             JitModules = RuntimeInformation.GetJitModulesInfo();
@@ -72,7 +74,7 @@ namespace BenchmarkDotNet.Environments
 
         public override IEnumerable<string> ToFormattedString()
         {
-            yield return $"{BenchmarkDotNetCaption}=v{BenchmarkDotNetVersion}, OS={OsVersion}";
+            yield return $"{BenchmarkDotNetCaption}=v{BenchmarkDotNetVersion}, OS={OsVersion.Value}";
             yield return $"Processor={ProcessorName.Value}, ProcessorCount={ProcessorCount}";
             yield return $"Frequency={ChronometerFrequency}, Resolution={GetChronometerResolution()}, Timer={HardwareTimerKind.ToString().ToUpper()}";
 #if !CLASSIC
@@ -82,7 +84,6 @@ namespace BenchmarkDotNet.Environments
 
         internal bool IsDotNetCliInstalled() => !string.IsNullOrEmpty(DotNetCliVersion.Value);
 
-        private static string GetBenchmarkDotNetCaption() => BenchmarkDotNetInfo.TitleBase;
-        private static string GetBenchmarkDotNetVersion() => BenchmarkDotNetInfo.FullVersion;
+        private static string GetBenchmarkDotNetVersion() => BenchmarkDotNetInfo.FullVersion.Value;
     }
 }

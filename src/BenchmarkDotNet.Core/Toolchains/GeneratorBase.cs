@@ -12,7 +12,7 @@ using BenchmarkDotNet.Toolchains.Results;
 
 namespace BenchmarkDotNet.Toolchains
 {
-    internal abstract class GeneratorBase : IGenerator
+    public abstract class GeneratorBase : IGenerator
     {
         public GenerateResult GenerateProject(Benchmark benchmark, ILogger logger, string rootArtifactsFolderPath, IConfig config, IResolver resolver)
         {
@@ -27,7 +27,7 @@ namespace BenchmarkDotNet.Toolchains
 
                 GenerateCode(benchmark, artifactsPaths);
                 GenerateAppConfig(benchmark, artifactsPaths, resolver);
-                GenerateProject(benchmark, artifactsPaths, resolver);
+                GenerateProject(benchmark, artifactsPaths, resolver, logger);
                 GenerateBuildScript(benchmark, artifactsPaths, resolver);
 
                 return GenerateResult.Success(artifactsPaths);
@@ -48,7 +48,7 @@ namespace BenchmarkDotNet.Toolchains
 
         protected virtual void CopyAllRequiredFiles(ArtifactsPaths artifactsPaths) { }
 
-        protected virtual void GenerateProject(Benchmark benchmark, ArtifactsPaths artifactsPaths, IResolver resolver) { }
+        protected virtual void GenerateProject(Benchmark benchmark, ArtifactsPaths artifactsPaths, IResolver resolver, ILogger logger) { }
 
         protected abstract void GenerateBuildScript(Benchmark benchmark, ArtifactsPaths artifactsPaths, IResolver resolver);
 
@@ -71,7 +71,8 @@ namespace BenchmarkDotNet.Toolchains
                 appConfigPath: $"{executablePath}.config",
                 projectFilePath: GetProjectFilePath(buildArtifactsDirectoryPath),
                 buildScriptFilePath: Path.Combine(buildArtifactsDirectoryPath, $"{programName}{RuntimeInformation.ScriptFileExtension}"),
-                executablePath: executablePath);
+                executablePath: executablePath,
+                programName: programName);
         }
 
         /// <summary>

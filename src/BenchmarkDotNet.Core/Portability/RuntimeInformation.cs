@@ -12,16 +12,17 @@ using BenchmarkDotNet.Extensions;
 using BenchmarkDotNet.Helpers;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains;
-
 #if !CORE
 using System.Management;
+
 #endif
 
 namespace BenchmarkDotNet.Portability
 {
     internal static class RuntimeInformation
     {
-        private static readonly bool isMono = Type.GetType("Mono.Runtime") != null; // it allocates a lot of memory, we need to check it once in order to keep Enging non-allocating!
+        private static readonly bool isMono =
+            Type.GetType("Mono.Runtime") != null; // it allocates a lot of memory, we need to check it once in order to keep Enging non-allocating!
 
         private const string DebugConfigurationName = "DEBUG";
         internal const string ReleaseConfigurationName = "RELEASE";
@@ -43,6 +44,24 @@ namespace BenchmarkDotNet.Portability
 #endif
         }
 
+        internal static bool IsLinux()
+        {
+#if !CORE
+            return System.Environment.OSVersion.Platform == PlatformID.Unix;
+#else
+            return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+#endif
+        }
+
+        internal static bool IsOSX()
+        {
+#if !CORE
+            return System.Environment.OSVersion.Platform == PlatformID.MacOSX;
+#else
+            return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+#endif
+        }
+
         internal static bool IsMono() => isMono;
 
         internal static string GetOsVersion()
@@ -50,15 +69,18 @@ namespace BenchmarkDotNet.Portability
 #if !CORE
             return System.Environment.OSVersion.ToString();
 #else
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (IsWindows())
             {
+                string ver = ProcessHelper.RunAndReadOutput("cmd", "/c ver");
+                if (ver != null)
+                    return NiceString(ver.Replace("[", "").Replace("]", "").Replace("Version", ""));
                 return "Windows";
             }
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (IsLinux())
             {
                 return "Linux";
             }
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (IsOSX())
             {
                 return "OSX";
             }
@@ -72,21 +94,55 @@ namespace BenchmarkDotNet.Portability
 #if !CORE
             if (IsWindows() && !IsMono())
             {
-                var info = string.Empty;
                 try
                 {
+                    string info = string.Empty;
                     var mosProcessor = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
                     foreach (var moProcessor in mosProcessor.Get().Cast<ManagementObject>())
                         info += moProcessor["name"]?.ToString();
-                  info = Regex.Replace(info.Replace("@", ""), @"\s+", " ");
+                    return NiceString(info);
                 }
                 catch (Exception)
                 {
+                    // ignored
                 }
-
-                return info;
             }
 #endif
+            if (IsWindows())
+            {
+                // Output example:
+                //     Name
+                //     Intel(R) Core(TM) i7 - 6700HQ CPU @ 2.60GHz
+                string output = ProcessHelper.RunAndReadOutput("wmic", "cpu get name");
+                if (output != null)
+                {
+                    var outputLines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (outputLines.Length >= 2)
+                        return NiceString(outputLines[1]);
+                }
+            }
+            if (IsLinux())
+            {
+                // Output example:
+                //     model name : Intel(R) Atom(TM) CPU N270   @ 1.60GHz
+                string output = ProcessHelper.RunAndReadOutput("cat", "/proc/cpuinfo");
+                if (output != null)
+                {
+                    var outputLines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    const string modelNamePrefix = "model name :";
+                    string modelNameLine = outputLines.FirstOrDefault(line => line.StartsWith(modelNamePrefix));
+                    if (modelNameLine != null)
+                        return NiceString(modelNameLine.Substring(modelNamePrefix.Length));
+                }
+            }
+            if (IsOSX())
+            {
+                // Output example:
+                //     Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz
+                string output = ProcessHelper.RunAndReadOutput("sysctl", "-n machdep.cpu.brand_string");
+                if (output != null)
+                    return NiceString(output);
+            }
             return Unknown; // TODO: verify if it is possible to get this for CORE
         }
 
@@ -245,6 +301,8 @@ namespace BenchmarkDotNet.Portability
             return string.Empty; // Unknown version
 #endif
         }
+
+        private static string NiceString(string processorName) => Regex.Replace(processorName.Replace("@", "").Trim(), @"\s+", " ");
 
         // See http://aakinshin.net/en/blog/dotnet/jit-version-determining-in-runtime/
         private class JitHelper
