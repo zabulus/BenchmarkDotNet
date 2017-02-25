@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿
 using System;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
@@ -16,4 +16,3 @@ namespace BenchmarkDotNet.Samples.Intro
         }
     }
 }
-#endif

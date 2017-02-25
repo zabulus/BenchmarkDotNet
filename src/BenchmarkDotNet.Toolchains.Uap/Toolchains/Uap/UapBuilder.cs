@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,7 +24,9 @@ namespace BenchmarkDotNet.Toolchains.Uap
         public BuildResult Build(GenerateResult generateResult, ILogger logger, Benchmark benchmark,
             IResolver resolver)
         {
-            if (!ExecuteCommand("cmd /c \"" + generateResult.ArtifactsPaths.BuildScriptFilePath + "\"", generateResult.ArtifactsPaths.BuildArtifactsDirectoryPath, logger, DefaultTimeout))
+            if (!ExecuteCommand("cmd /c \"" + generateResult.ArtifactsPaths.BuildScriptFilePath + "\"",
+                generateResult.ArtifactsPaths.BuildArtifactsDirectoryPath,
+                DefaultTimeout))
             {
                 return BuildResult.Failure(generateResult, new Exception(" failed"));
             }
@@ -31,22 +34,15 @@ namespace BenchmarkDotNet.Toolchains.Uap
             return BuildResult.Success(generateResult);
         }
 
-        internal static bool ExecuteCommand(string commandWithArguments, string workingDirectory, ILogger logger, TimeSpan timeout)
+        internal static bool ExecuteCommand(string commandWithArguments, string workingDirectory, TimeSpan timeout)
         {
             using (var process = new Process { StartInfo = BuildStartInfo(workingDirectory, commandWithArguments) })
             {
-                using (new AsyncErrorOutputLogger(logger, process))
-                {
-                    process.Start();
+                process.Start();
 
-                    // don't forget to call, otherwise logger will not get any events
-                    process.BeginErrorReadLine();
-                    process.BeginOutputReadLine();
+                process.WaitForExit((int)timeout.TotalMilliseconds);
 
-                    process.WaitForExit((int)timeout.TotalMilliseconds);
-
-                    return process.ExitCode <= 0;
-                }
+                return process.ExitCode <= 0;
             }
         }
 
@@ -58,10 +54,9 @@ namespace BenchmarkDotNet.Toolchains.Uap
                 WorkingDirectory = workingDirectory,
                 Arguments = string.Join(" ", arguments.Split(' ').Skip(1)),
                 UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
+                CreateNoWindow = true
             };
         }
     }
 }
+#endif

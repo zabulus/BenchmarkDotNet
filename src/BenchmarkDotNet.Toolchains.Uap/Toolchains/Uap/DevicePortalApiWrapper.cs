@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿#if !UAP
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -129,6 +130,11 @@ namespace BenchmarkDotNet.Toolchains.Uap
             installRequest.AddCookie(csrfToken.Name, csrfToken.Value);
             installRequest.AddCookie(wmid.Name, wmid.Value);
             installRequest.AddFile(Path.GetFileName(fullPath), fullPath);
+            foreach(var dependency in Directory.EnumerateFiles(Path.Combine(Path.GetDirectoryName(fullPath), "Dependencies", "ARM")))
+            {
+                installRequest.AddFile(Path.GetFileName(dependency), dependency);
+            }
+
             installRequest.AddQueryParameter("package", Path.GetFileName(fullPath));
             installRequest.AddHeader("X-CSRF-Token", csrfToken.Value);
             int i = 10;
@@ -305,3 +311,4 @@ namespace BenchmarkDotNet.Toolchains.Uap
         }
     }
 }
+#endif

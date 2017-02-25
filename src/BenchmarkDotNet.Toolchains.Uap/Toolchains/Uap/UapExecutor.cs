@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Linq;
 using BenchmarkDotNet.Characteristics;
 using BenchmarkDotNet.Diagnosers;
@@ -61,3 +62,4 @@ namespace BenchmarkDotNet.Toolchains.Uap
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UAP
+using System;
 using System.Linq;
 using System.Threading;
 using BenchmarkDotNet.Characteristics;
@@ -7,6 +8,7 @@ using BenchmarkDotNet.Toolchains.Uap.Helpers;
 using System.IO;
 using BenchmarkDotNet.Code;
 using System.Reflection;
+using BenchmarkDotNet.Loggers;
 
 namespace BenchmarkDotNet.Toolchains.Uap
 {
@@ -21,7 +23,7 @@ namespace BenchmarkDotNet.Toolchains.Uap
             this.uapBinariesFolder = uapBinariesFolder;
         }
 
-        protected override void GenerateProject(Benchmark benchmark, ArtifactsPaths artifactsPaths, IResolver resolver)
+        protected override void GenerateProject(Benchmark benchmark, ArtifactsPaths artifactsPaths, IResolver resolver, ILogger logger)
         {
             string content = ResourceHelper.LoadTemplate("UapBenchmarkProject.notcsproj");
 
@@ -89,9 +91,10 @@ namespace BenchmarkDotNet.Toolchains.Uap
 
         protected override void GenerateBuildScript(Benchmark benchmark, ArtifactsPaths artifactsPaths, IResolver resolver)
         {
-            string content = $"dotnet restore{Environment.NewLine}" +
-                             $"call \"%VS140COMNTOOLS%VsDevCmd.bat\"{Environment.NewLine}" +
-                             $"msbuild {ProjectFileName}";
+            string content = 
+                             $"call \"%VS150COMNTOOLS%VsDevCmd.bat\"{Environment.NewLine}" +
+                             $"msbuild /t:Restore{Environment.NewLine}" +
+                             $"msbuild {ProjectFileName} /p:Configuration=Release;Platform=ARM";
 
             File.WriteAllText(artifactsPaths.BuildScriptFilePath, content);
         }
@@ -159,3 +162,4 @@ namespace BenchmarkDotNet.Toolchains.Uap
         }
     }
 }
+#endif

@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿
 using System;
 using System.Security.Cryptography;
 using BenchmarkDotNet.Attributes;
@@ -34,4 +34,3 @@ namespace BenchmarkDotNet.Samples.Algorithms
         }
     }
 }
-#endif

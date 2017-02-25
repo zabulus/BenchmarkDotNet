@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
@@ -21,4 +21,3 @@ namespace BenchmarkDotNet.Samples.Intro
         }
     }
 }
-#endif

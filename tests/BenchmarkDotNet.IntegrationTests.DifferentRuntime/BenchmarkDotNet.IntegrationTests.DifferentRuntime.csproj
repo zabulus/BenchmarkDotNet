@@ -54,8 +54,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\BenchmarkDotNet.Core\BenchmarkDotNet.Core.csproj" />
-    <ProjectReference Include="..\..\src\BenchmarkDotNet\BenchmarkDotNet.csproj" />
+    <ProjectReference Include="..\..\src\BenchmarkDotNet.Core\BenchmarkDotNet.Core.csproj">
+      <Project>{95F5D645-19E3-432F-95D4-C5EA374DD15B}</Project>
+      <Name>BenchmarkDotNet.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\BenchmarkDotNet\BenchmarkDotNet.csproj">
+      <Project>{AF1E6F8A-5C63-465F-96F4-5E5F183A33B9}</Project>
+      <Name>BenchmarkDotNet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

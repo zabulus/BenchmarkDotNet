@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿
 using System;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
@@ -36,4 +36,3 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Sleep50Noisy() => Thread.Sleep(random.Next(100));
     }
 }
-#endif

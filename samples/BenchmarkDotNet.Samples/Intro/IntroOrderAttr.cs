@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
@@ -20,4 +20,3 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Fast() => Thread.Sleep(X * 50);
     }
 }
-#endif

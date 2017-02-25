@@ -7,10 +7,13 @@
     <RuntimeIdentifier Condition=" '$(TargetFramework)' == 'net45' ">win7-x86</RuntimeIdentifier>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>BenchmarkDotNet.Samples</AssemblyName>
-    <OutputType>Exe</OutputType>
+    <OutputType>winexe</OutputType>
     <PackageId>BenchmarkDotNet.Samples</PackageId>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <ApplicationIcon />
+    <OutputTypeEx>winexe</OutputTypeEx>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <ProjectReference Include="..\..\src\BenchmarkDotNet.Diagnostics.Windows\BenchmarkDotNet.Diagnostics.Windows.csproj" />

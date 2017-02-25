@@ -19,6 +19,8 @@ namespace BenchmarkDotNet.Engines
                 throw new ArgumentNullException(nameof(engineParameters.IdleAction));
             if(engineParameters.TargetJob == null)
                 throw new ArgumentNullException(nameof(engineParameters.TargetJob));
+            if (engineParameters.WriteLineAction == null)
+                engineParameters.WriteLineAction = (string x) => Console.WriteLine(x);
 
             return new Engine(
                 engineParameters.Dummy1Action,
@@ -30,7 +32,8 @@ namespace BenchmarkDotNet.Engines
                 engineParameters.SetupAction,
                 engineParameters.CleanupAction,
                 engineParameters.OperationsPerInvoke,
-                engineParameters.IsDiagnoserAttached);
+                engineParameters.IsDiagnoserAttached,
+                engineParameters.WriteLineAction);
         }
     }
 }

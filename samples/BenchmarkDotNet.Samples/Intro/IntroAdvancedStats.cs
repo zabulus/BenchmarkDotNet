@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿
 using System;
 using System.Security.Cryptography;
 using BenchmarkDotNet.Attributes;
@@ -36,4 +36,3 @@ namespace BenchmarkDotNet.Samples.Intro
         public byte[] Sha256() => sha256.ComputeHash(data);
     }
 }
-#endif

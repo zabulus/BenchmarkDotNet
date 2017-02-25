@@ -17,5 +17,6 @@ namespace BenchmarkDotNet.Engines
         public Action CleanupAction { get; set; } = null;
         public bool IsDiagnoserAttached { get; set; }
         public IResolver Resolver { get; set; }
+        public Action<string> WriteLineAction { get; set; }
     }
 }

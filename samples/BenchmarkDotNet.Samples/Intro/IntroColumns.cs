@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿
 using System;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
@@ -18,4 +18,3 @@ namespace BenchmarkDotNet.Samples.Intro
         public void Benchmark() => Thread.Sleep(random.Next(2) == 0 ? 10 : 50);
     }
 }
-#endif

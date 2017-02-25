@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Exporters;
@@ -18,4 +18,3 @@ namespace BenchmarkDotNet.Samples.Intro
         [Benchmark] public void Sleep20() => Thread.Sleep(20);
     }
 }
-#endif

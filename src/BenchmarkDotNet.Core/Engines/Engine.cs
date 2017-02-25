@@ -40,10 +40,12 @@ namespace BenchmarkDotNet.Engines
         private readonly EngineTargetStage targetStage;
         private bool isJitted, isPreAllocated;
         private int forcedFullGarbageCollections;
+        private Action<string> writeLineAction;
 
         internal Engine(Action dummy1Action, Action dummy2Action, Action dummy3Action, Action<long> idleAction, Action<long> mainAction, Job targetJob,
-            Action setupAction, Action cleanupAction, long operationsPerInvoke, bool isDiagnoserAttached)
+            Action setupAction, Action cleanupAction, long operationsPerInvoke, bool isDiagnoserAttached, Action<string> writeLineAction)
         {
+            this.writeLineAction = writeLineAction;
             IdleAction = idleAction;
             Dummy1Action = dummy1Action;
             Dummy2Action = dummy2Action;
@@ -175,14 +177,14 @@ namespace BenchmarkDotNet.Engines
         {
             EnsureNothingIsPrintedWhenDiagnoserIsAttached();
 
-            Console.WriteLine(text);
+            this.writeLineAction(text);
         }
 
         public void WriteLine()
         {
             EnsureNothingIsPrintedWhenDiagnoserIsAttached();
 
-            Console.WriteLine();
+            this.writeLineAction(string.Empty);
         }
 
         private void EnableMonitoring()

@@ -12,7 +12,7 @@ using BenchmarkDotNet.Extensions;
 using BenchmarkDotNet.Helpers;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains;
-#if !CORE
+#if !CORE && !UAP
 using System.Management;
 
 #endif
@@ -36,7 +36,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static bool IsWindows()
         {
-#if !CORE
+#if !CORE && !UAP
             return new[] { PlatformID.Win32NT, PlatformID.Win32S, PlatformID.Win32Windows, PlatformID.WinCE }
                 .Contains(System.Environment.OSVersion.Platform);
 #else
@@ -46,7 +46,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static bool IsLinux()
         {
-#if !CORE
+#if !CORE && !UAP
             return System.Environment.OSVersion.Platform == PlatformID.Unix;
 #else
             return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
@@ -55,7 +55,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static bool IsOSX()
         {
-#if !CORE
+#if !CORE && !UAP
             return System.Environment.OSVersion.Platform == PlatformID.MacOSX;
 #else
             return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
@@ -66,9 +66,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static string GetOsVersion()
         {
-#if !CORE
-            return System.Environment.OSVersion.ToString();
-#else
+#if CORE
             if (IsWindows())
             {
                 string ver = ProcessHelper.RunAndReadOutput("cmd", "/c ver");
@@ -84,14 +82,17 @@ namespace BenchmarkDotNet.Portability
             {
                 return "OSX";
             }
-
-            return Unknown;
+            return "Unknown";
+#elif UAP
+            return "Windows";
+#else
+            return System.Environment.OSVersion.ToString();
 #endif
         }
 
         internal static string GetProcessorName()
         {
-#if !CORE
+#if !CORE && !UAP
             if (IsWindows() && !IsMono())
             {
                 try
@@ -107,7 +108,7 @@ namespace BenchmarkDotNet.Portability
                     // ignored
                 }
             }
-#endif
+#elif !UAP
             if (IsWindows())
             {
                 // Output example:
@@ -143,6 +144,7 @@ namespace BenchmarkDotNet.Portability
                 if (output != null)
                     return NiceString(output);
             }
+#endif
             return Unknown; // TODO: verify if it is possible to get this for CORE
         }
 
@@ -170,6 +172,8 @@ namespace BenchmarkDotNet.Portability
             return IsMono() ? Runtime.Mono : Runtime.Clr;
 #elif CORE
             return Runtime.Core;
+#elif UAP
+            return Runtime.Uap;
 #endif
         }
 
@@ -177,7 +181,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static IEnumerable<JitModule> GetJitModules()
         {
-#if !CORE
+#if !CORE && !UAP
             return
                 Process.GetCurrentProcess().Modules
                     .OfType<ProcessModule>()
@@ -272,7 +276,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static string GetDotNetCliRuntimeIdentifier()
         {
-#if CORE
+#if CORE || UAP
             return Microsoft.DotNet.InternalAbstractions.RuntimeEnvironment.GetRuntimeIdentifier();
 #else
 // the Microsoft.DotNet.InternalAbstractions has no .NET 4.0 support, so we have to build it on our own
