@@ -103,7 +103,7 @@ namespace BenchmarkDotNet.Toolchains
                 case CoreRuntime core:
                     start.FileName = exePath;
                     break;
-                case Runtime.Uap:
+                case UapRuntime uap:
                     start.FileName = exePath;
                     start.Arguments = args;
                     break;

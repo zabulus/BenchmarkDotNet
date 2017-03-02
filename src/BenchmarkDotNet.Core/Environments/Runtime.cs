@@ -19,6 +19,8 @@
         /// </summary>
         public static readonly Runtime Core = new CoreRuntime();
 
+        public static readonly Runtime Uap = new UapRuntime();
+
         public string Name { get; }
 
         protected Runtime(string name)
@@ -54,6 +56,13 @@
         public MonoRuntime(string name, string customPath) : base(name)
         {
             CustomPath = customPath;
+        }
+    }
+
+    public class UapRuntime : Runtime
+    {
+        public UapRuntime() : base("Uap")
+        {
         }
     }
 }
