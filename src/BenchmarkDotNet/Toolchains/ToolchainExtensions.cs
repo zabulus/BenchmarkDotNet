@@ -25,14 +25,14 @@ namespace BenchmarkDotNet.Toolchains
         {
             switch (runtime)
             {
-                case Runtime.Clr:
-                case Runtime.Mono:
+                case ClrRuntime clr:
+                case MonoRuntime mono:
 #if CLASSIC
                     return new Roslyn.RoslynToolchain();
 #else
                     return isUsingProjectJson.Value ? ProjectJsonNet46Toolchain.Instance : CsProjNet46Toolchain.Instance;
 #endif
-                case Runtime.Core:
+                case CoreRuntime core:
                     return isUsingProjectJson.Value ? ProjectJsonCoreToolchain.Current.Value : CsProjCoreToolchain.Current.Value;
                 case Runtime.Uap:
                     throw new ArgumentOutOfRangeException("Uap Toolchain must be specified as charateristic in Job");

@@ -12,7 +12,7 @@ using BenchmarkDotNet.Extensions;
 using BenchmarkDotNet.Helpers;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains;
-#if !CORE && !UAP
+#if !CORE
 using System.Management;
 
 #endif
@@ -36,7 +36,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static bool IsWindows()
         {
-#if !CORE && !UAP
+#if !CORE
             return new[] { PlatformID.Win32NT, PlatformID.Win32S, PlatformID.Win32Windows, PlatformID.WinCE }
                 .Contains(System.Environment.OSVersion.Platform);
 #else
@@ -46,16 +46,16 @@ namespace BenchmarkDotNet.Portability
 
         internal static bool IsLinux()
         {
-#if !CORE && !UAP
+#if !CORE
             return System.Environment.OSVersion.Platform == PlatformID.Unix;
 #else
             return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 #endif
         }
 
-        internal static bool IsOSX()
+        internal static bool IsMacOSX()
         {
-#if !CORE && !UAP
+#if !CORE
             return System.Environment.OSVersion.Platform == PlatformID.MacOSX;
 #else
             return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
@@ -66,7 +66,15 @@ namespace BenchmarkDotNet.Portability
 
         internal static string GetOsVersion()
         {
-#if CORE
+            if (IsLinux())
+            {
+                string os = ExternalToolsHelper.LsbRelease.Value.GetValueOrDefault("Description");
+                if (!string.IsNullOrWhiteSpace(os))
+                    return os;
+            }
+#if !CORE
+            return System.Environment.OSVersion.ToString();
+#else
             if (IsWindows())
             {
                 string ver = ProcessHelper.RunAndReadOutput("cmd", "/c ver");
@@ -78,21 +86,18 @@ namespace BenchmarkDotNet.Portability
             {
                 return "Linux";
             }
-            if (IsOSX())
+            if (IsMacOSX())
             {
                 return "OSX";
             }
-            return "Unknown";
-#elif UAP
-            return "Windows";
-#else
-            return System.Environment.OSVersion.ToString();
+
+            return Unknown;
 #endif
         }
 
         internal static string GetProcessorName()
         {
-#if !CORE && !UAP
+#if !CORE
             if (IsWindows() && !IsMono())
             {
                 try
@@ -108,44 +113,17 @@ namespace BenchmarkDotNet.Portability
                     // ignored
                 }
             }
-#elif !UAP
-            if (IsWindows())
-            {
-                // Output example:
-                //     Name
-                //     Intel(R) Core(TM) i7 - 6700HQ CPU @ 2.60GHz
-                string output = ProcessHelper.RunAndReadOutput("wmic", "cpu get name");
-                if (output != null)
-                {
-                    var outputLines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (outputLines.Length >= 2)
-                        return NiceString(outputLines[1]);
-                }
-            }
-            if (IsLinux())
-            {
-                // Output example:
-                //     model name : Intel(R) Atom(TM) CPU N270   @ 1.60GHz
-                string output = ProcessHelper.RunAndReadOutput("cat", "/proc/cpuinfo");
-                if (output != null)
-                {
-                    var outputLines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                    const string modelNamePrefix = "model name :";
-                    string modelNameLine = outputLines.FirstOrDefault(line => line.StartsWith(modelNamePrefix));
-                    if (modelNameLine != null)
-                        return NiceString(modelNameLine.Substring(modelNamePrefix.Length));
-                }
-            }
-            if (IsOSX())
-            {
-                // Output example:
-                //     Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz
-                string output = ProcessHelper.RunAndReadOutput("sysctl", "-n machdep.cpu.brand_string");
-                if (output != null)
-                    return NiceString(output);
-            }
 #endif
-            return Unknown; // TODO: verify if it is possible to get this for CORE
+            if (IsWindows())
+                return NiceString(ExternalToolsHelper.Wmic.Value.GetValueOrDefault("Name") ?? "");
+
+            if (IsLinux())
+                return NiceString(ExternalToolsHelper.ProcCpuInfo.Value.GetValueOrDefault("model name") ?? "");
+
+            if (IsMacOSX())
+                return NiceString(ExternalToolsHelper.Sysctl.Value.GetValueOrDefault("machdep.cpu.brand_string") ?? "");
+
+            return Unknown;
         }
 
         internal static string GetRuntimeVersion()
@@ -155,12 +133,24 @@ namespace BenchmarkDotNet.Portability
                 var monoRuntimeType = Type.GetType("Mono.Runtime");
                 var monoDisplayName = monoRuntimeType?.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
                 if (monoDisplayName != null)
-                    return "Mono " + monoDisplayName.Invoke(null, null);
+                {
+                    string version = monoDisplayName.Invoke(null, null)?.ToString();
+                    if (version != null)
+                    {
+                        int bracket1 = version.IndexOf('('), bracket2 = version.IndexOf(')');
+                        if (bracket1 != -1 && bracket2 != -1)
+                        {
+                            string comment = version.Substring(bracket1 + 1, bracket2 - bracket1 - 1);                            
+                            var commentParts = comment.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (commentParts.Length > 2)
+                                version = version.Substring(0, bracket1) + "(" + commentParts[0] + " " + commentParts[1] + ")";
+                        }
+                    }                    
+                    return "Mono " + version;
+                }
             }
 #if CLASSIC
             return $"Clr {System.Environment.Version}";
-#elif UAP
-            return "Uap 10.0";
 #elif CORE
             return System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
 #endif
@@ -172,8 +162,6 @@ namespace BenchmarkDotNet.Portability
             return IsMono() ? Runtime.Mono : Runtime.Clr;
 #elif CORE
             return Runtime.Core;
-#elif UAP
-            return Runtime.Uap;
 #endif
         }
 
@@ -181,7 +169,7 @@ namespace BenchmarkDotNet.Portability
 
         internal static IEnumerable<JitModule> GetJitModules()
         {
-#if !CORE && !UAP
+#if !CORE
             return
                 Process.GetCurrentProcess().Modules
                     .OfType<ProcessModule>()
@@ -248,35 +236,29 @@ namespace BenchmarkDotNet.Portability
 
         internal static IntPtr GetCurrentAffinity()
         {
-#if !UAP
             try
             {
                 return Process.GetCurrentProcess().ProcessorAffinity;
             }
             catch (PlatformNotSupportedException)
-            {                
+            {
+                return default(IntPtr);
             }
-#endif
-            return default(IntPtr);
         }
 
         internal static string GetConfiguration()
         {
-#if !UAP
             bool? isDebug = Assembly.GetEntryAssembly().IsDebug();
             if (isDebug.HasValue == false)
             {
                 return Unknown;
             }
             return isDebug.Value ? DebugConfigurationName : ReleaseConfigurationName;
-#else
-            return Unknown;
-#endif
         }
 
         internal static string GetDotNetCliRuntimeIdentifier()
         {
-#if CORE || UAP
+#if CORE
             return Microsoft.DotNet.InternalAbstractions.RuntimeEnvironment.GetRuntimeIdentifier();
 #else
 // the Microsoft.DotNet.InternalAbstractions has no .NET 4.0 support, so we have to build it on our own
