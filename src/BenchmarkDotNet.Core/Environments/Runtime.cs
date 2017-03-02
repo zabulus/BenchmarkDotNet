@@ -19,8 +19,6 @@
         /// </summary>
         public static readonly Runtime Core = new CoreRuntime();
 
-        public static readonly Runtime Uap = new UapRuntime();
-
         public string Name { get; }
 
         protected Runtime(string name)
@@ -61,8 +59,17 @@
 
     public class UapRuntime : Runtime
     {
-        public UapRuntime() : base("Uap")
+        public string DevicePortalUri { get; private set; }
+        public string CsfrCookie { get; private set; }
+        public string WmidCookie { get; private set; }
+        public string UapBinariesPath { get; private set; }
+
+        public UapRuntime(string name, string devicePortalUri, string csfrCookie, string wmidCookie, string uapBinariesPath) : base(name)
         {
+            this.DevicePortalUri = devicePortalUri;
+            this.CsfrCookie = csfrCookie;
+            this.WmidCookie = wmidCookie;
+            this.UapBinariesPath = uapBinariesPath;
         }
     }
 }

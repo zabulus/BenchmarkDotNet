@@ -5,38 +5,13 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains.Uap;
 using System.IO;
+using BenchmarkDotNet.Attributes.Jobs;
 
 namespace BenchmarkDotNet.Samples.Framework
 {
-    [Config(typeof(Config))]
+    [UapJob("https://192.168.1.51/", "2LYMHOZH9C4e1PUcBQVkkNDFikCXpY6v", "3914980555611581204597258868819265487056560409287773938948508430", @"D:\Workshop\BenchmarkDotNet\src\BenchmarkDotNet\bin\Debug\uap10.0")]
     public class Framework_DateTime
     {
-        private class Config : ManualConfig
-        {
-            public Config()
-            {
-                var infrastructure = new InfrastructureMode();
-                infrastructure.Toolchain = new UapToolchain(new UapToolchainConfig()
-                {
-                    CSRFCookieValue = "2LYMHOZH9C4e1PUcBQVkkNDFikCXpY6v",
-                    DevicePortalUri = "https://192.168.1.51/",
-                    UAPBinariesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uap"),
-                    WMIDCookieValue = "3914980555611581204597258868819265487056560409287773938948508430"
-                });
-
-                var uapJob = new Job("Uap", EnvMode.Uap, infrastructure);
-
-                Add(uapJob);
-                Add(new TagColumn("Tool", name => name.Replace(GetMetric(name), "")));
-                Add(new TagColumn("Metric", GetMetric));
-            }
-
-            private static string GetMetric(string name)
-            {
-                return name.Contains("Latency") ? "Latency" : "Granularity";
-            }
-        }
-
         [Benchmark]
         public long UtcNowLatency()
         {

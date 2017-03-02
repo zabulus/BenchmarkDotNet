@@ -7,6 +7,7 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains.CsProj;
 using BenchmarkDotNet.Toolchains.DotNetCli;
 using BenchmarkDotNet.Toolchains.ProjectJson;
+using BenchmarkDotNet.Toolchains.Uap;
 
 namespace BenchmarkDotNet.Toolchains
 {
@@ -34,8 +35,8 @@ namespace BenchmarkDotNet.Toolchains
 #endif
                 case CoreRuntime core:
                     return isUsingProjectJson.Value ? ProjectJsonCoreToolchain.Current.Value : CsProjCoreToolchain.Current.Value;
-                case Runtime.Uap:
-                    throw new ArgumentOutOfRangeException("Uap Toolchain must be specified as charateristic in Job");
+                case UapRuntime uap:
+                    return new UapToolchain(new UapToolchainConfig() { CSRFCookieValue = uap.CsfrCookie, DevicePortalUri = uap.DevicePortalUri, UAPBinariesFolder = uap.UapBinariesPath, WMIDCookieValue = uap.WmidCookie });
                 default:
                     throw new ArgumentOutOfRangeException(nameof(runtime), runtime, "Runtime not supported");
             }
